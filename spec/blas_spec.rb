@@ -70,6 +70,17 @@ describe NMatrix::BLAS do
         expect(b[1]).to eq(5)
         expect(b[2]).to eq(-13)
       end
+
+      it "expose unfriendly cblas_trsm for two matrices" do
+        a = NMatrix.new([3,3], [1, 0, 0, 1, 1, 0, 3, 3, 1], dtype: dtype)
+        b = NMatrix.new([3,2], [1, 1, 2, 2, 3, 3], dtype: dtype)
+
+        x = b.dup
+        NMatrix::BLAS::cblas_trsm(:row, :left, :lower, false, :unit,
+            b.shape[0], b.shape[1], 1.0, a.dup, a.shape[0], x, b.shape[1])
+
+        expect(a.dot x).to eq(b)
+      end
     end
   end
 
